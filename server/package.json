@@ -1,0 +1,25 @@
+{
+  "name": "disclose-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "^9.8.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "app-root-path": "^2.0.1",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "mongodb": "^3.0.7",
+    "npm": "^6.1.0",
+    "npm-check-updates": "^2.15.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.3"
+  }
+}
