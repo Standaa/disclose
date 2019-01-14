@@ -12,7 +12,7 @@ exports.get = () => {
 
 exports.connect = (url) => {
   return new Promise((resolve, reject) => {
-    const options = { keepAlive: 1, connectTimeoutMS: 30000, reconnectTries: 30, reconnectInterval: 5000 };
+    const options = { keepAlive: 1, useNewUrlParser: true, connectTimeoutMS: 30000, reconnectTries: 30, reconnectInterval: 5000 };
     mongoClient.connect(url, options, (err, database) => {
       if (err) reject(err);
       state.DB = database.db('myhentai');
@@ -31,5 +31,5 @@ exports.close = () => {
         resolve(result);
       });
     }
-  });  
+  });
 }

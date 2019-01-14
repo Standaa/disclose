@@ -5,6 +5,11 @@
 /tmp
 /out-tsc
 
+/client/uploads/
+/client/node_modules/
+/client/dist
+/client/e2e
+
 # dependencies
 /node_modules
 
