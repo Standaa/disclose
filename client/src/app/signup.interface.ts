@@ -4,6 +4,8 @@ export interface User {
   address: string;
   postcode: string;
   city: string;
+  country: string;
+  age: number;
   email: string;
   fileToUpload: any;
 }

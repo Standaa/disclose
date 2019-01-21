@@ -9,10 +9,10 @@ import { WEB3 } from './web3.token';
 import { User } from './signup.interface';
 
 import { BabyjubjubService } from './lib/babyjubjub.service';
+import { WindowRefService, ICustomWindow } from './lib/window.ref.service';
 
 // import * as Bn from "bn.js";
-import * as Bn from "bn.js";
-
+import * as Bn from "../../node_modules/bn.js/lib/bn.js";
 
 @Component({
   selector: 'app-root',
@@ -27,6 +27,8 @@ export class AppComponent implements OnInit {
   fileToUpload: File;
   user: FormGroup;
 
+  window: ICustomWindow;
+
   @ViewChild('fileInputLabel')
   fileInputLabel: ElementRef;
 
@@ -34,8 +36,11 @@ export class AppComponent implements OnInit {
     @Inject(WEB3) private web3: Web3,
     private fb: FormBuilder,
     private appService: AppService,
-    private babyjubjubService: BabyjubjubService
-  ) {}
+    private babyjubjubService: BabyjubjubService,
+    private windowRef: WindowRefService
+  ) {
+    this.window = windowRef.nativeWindow;
+  }
 
   async ngOnInit() {
     this.user = this.fb.group({
@@ -44,6 +49,8 @@ export class AppComponent implements OnInit {
       address: [''],
       postcode: [''],
       city: [''],
+      country: [''],
+      age: [''],
       email: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
       fileToUpload: ['', [Validators.required]]
     });
@@ -61,15 +68,6 @@ export class AppComponent implements OnInit {
       console.log('Please Install Metamask and create an account noob');
     }
 
-    this.createPerdersen();
-
-  }
-
-  createPerdersen() {
-    const inputs = [new Bn('1',10),new Bn('70',10),new Bn('20',10)];
-    const secret = new Bn('101',10);    ;
-    const ped = this.babyjubjubService.pedersenCommitment(inputs, secret);
-    this.babyjubjubService.assertOnCurve(ped);
   }
 
   onFileChange(files: FileList) {
@@ -87,11 +85,33 @@ export class AppComponent implements OnInit {
     formData.append('firstName', value.firstName);
     formData.append('lastName', value.lastName);
     formData.append('email', value.email);
+    formData.append('country', value.country);
+    formData.append('age', value.age.toString());
     formData.append('userUploadedFile', this.fileToUpload);
 
     formData.append('publicKey', this.publicKey);
 
-    this.appService.uploadUserData(formData).subscribe(res => console.log(res));
- }
+    this.createPerdersen(formData);
+
+    // this.appService.uploadUserData(formData).subscribe(res => console.log(res));
+  }
+
+   createPerdersen(formData) {
+     const random_num = new Uint8Array(253 / 8); // 2048 = number length in bits
+     const sec = this.window.crypto.getRandomValues(random_num);
+
+     let inputs = [];
+     for(var pair of formData.entries()) {
+       if (pair[0] !== "userUploadedFile") {
+         console.log(pair[1]);
+         inputs.push(new Bn(pair[1], 10));
+       }
+     }
+
+     const secret = new Bn(sec.toString(), 10);
+     const ped = this.babyjubjubService.pedersenCommitment(inputs, secret);
+     this.babyjubjubService.assertOnCurve(ped);
+   }
+
 
 }

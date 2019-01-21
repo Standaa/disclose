@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Bn from "bn.js";
+import * as Bn from "../../../node_modules/bn.js/lib/bn.js";
 
 @Injectable()
 
