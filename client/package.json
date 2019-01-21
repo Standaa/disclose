@@ -20,8 +20,11 @@
     "@angular/platform-browser": "~7.1.0",
     "@angular/platform-browser-dynamic": "~7.1.0",
     "@angular/router": "~7.1.0",
+    "@types/bn.js": "^4.11.4",
+    "bn.js": "^4.11.8",
     "core-js": "^2.5.4",
     "rxjs": "^6.3.3",
+    "snarkjs": "^0.1.9",
     "tslib": "^1.9.0",
     "web3": "^1.0.0-beta.37",
     "zone.js": "~0.8.26"

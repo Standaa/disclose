@@ -8,11 +8,18 @@ import { WEB3 } from './web3.token';
 
 import { User } from './signup.interface';
 
+import { BabyjubjubService } from './lib/babyjubjub.service';
+
+// import * as Bn from "bn.js";
+import * as Bn from "bn.js";
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnInit {
 
   title = 'disclose';
@@ -26,9 +33,9 @@ export class AppComponent implements OnInit {
   constructor (
     @Inject(WEB3) private web3: Web3,
     private fb: FormBuilder,
-    private appService: AppService
+    private appService: AppService,
+    private babyjubjubService: BabyjubjubService
   ) {}
-
 
   async ngOnInit() {
     this.user = this.fb.group({
@@ -53,6 +60,16 @@ export class AppComponent implements OnInit {
     } else {
       console.log('Please Install Metamask and create an account noob');
     }
+
+    this.createPerdersen();
+
+  }
+
+  createPerdersen() {
+    const inputs = [new Bn('1',10),new Bn('70',10),new Bn('20',10)];
+    const secret = new Bn('101',10);    ;
+    const ped = this.babyjubjubService.pedersenCommitment(inputs, secret);
+    this.babyjubjubService.assertOnCurve(ped);
   }
 
   onFileChange(files: FileList) {
@@ -71,6 +88,8 @@ export class AppComponent implements OnInit {
     formData.append('lastName', value.lastName);
     formData.append('email', value.email);
     formData.append('userUploadedFile', this.fileToUpload);
+
+    formData.append('publicKey', this.publicKey);
 
     this.appService.uploadUserData(formData).subscribe(res => console.log(res));
  }
