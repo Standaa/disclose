@@ -77,11 +77,12 @@ export class AppComponent implements OnInit {
     this.fileToUpload = files.item(0);
   }
 
-  onSubmit({ value, valid }: { value: User, valid: boolean }) {
+  async onSubmit({ value, valid }: { value: User, valid: boolean }) {
     console.log(value, valid);
 
     let formData: FormData = new FormData();
     console.log('value', value.firstName);
+
     formData.append('firstName', value.firstName);
     formData.append('lastName', value.lastName);
     formData.append('email', value.email);
@@ -89,14 +90,19 @@ export class AppComponent implements OnInit {
     formData.append('age', value.age.toString());
     formData.append('userUploadedFile', this.fileToUpload);
 
-    formData.append('publicKey', this.publicKey);
+    // formData.append('publicKey', this.publicKey);
 
-    this.createPerdersen(formData);
+    const ped = await this.createPerdersen(formData);
+    console.log("ped", ped);
+    console.log("ped2", ped.toString());
+    // Generation dun snark.
 
-    // this.appService.uploadUserData(formData).subscribe(res => console.log(res));
+
+    // this.appService.uploadUserData(formData, ped, mySnark).subscribe(res => console.log(res));
+
   }
 
-   createPerdersen(formData) {
+   async createPerdersen(formData) {
      const random_num = new Uint8Array(253 / 8); // 2048 = number length in bits
      const sec = this.window.crypto.getRandomValues(random_num);
 
@@ -109,8 +115,7 @@ export class AppComponent implements OnInit {
      }
 
      const secret = new Bn(sec.toString(), 10);
-     const ped = this.babyjubjubService.pedersenCommitment(inputs, secret);
-     this.babyjubjubService.assertOnCurve(ped);
+     return this.babyjubjubService.pedersenCommitment(inputs, secret);
    }
 
 
