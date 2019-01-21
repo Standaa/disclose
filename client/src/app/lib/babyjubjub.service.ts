@@ -61,7 +61,7 @@ export class BabyjubjubService {
     }
 
     pedRoot = this.add (pedRoot,
-                  this.multiply(secret,this.referencePoints[this.referencePoints.length - 1]));
+                  this.multiply(secret,this.referencePoints[inputs.length]));
     console.log(pedRoot[0].toString(10));
     this.assertOnCurve(pedRoot);
     return pedRoot
