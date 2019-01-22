@@ -8,10 +8,9 @@ import { WEB3 } from './web3.token';
 
 import { User } from './signup.interface';
 
-import { BabyjubjubService } from './lib/babyjubjub.service';
-import { WindowRefService, ICustomWindow } from './lib/window.ref.service';
+import { BabyjubjubService } from './services/babyjubjub.service';
+import { WindowRefService, ICustomWindow } from './services/window.ref.service';
 
-// import * as Bn from "bn.js";
 import * as Bn from "../../node_modules/bn.js/lib/bn.js";
 
 @Component({

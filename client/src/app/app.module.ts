@@ -10,8 +10,8 @@ import { AppComponent } from './app.component';
 
 import Web3 from 'web3';
 
-import { BabyjubjubService } from './lib/babyjubjub.service';
-import { WindowRefService } from './lib/window.ref.service';
+import { BabyjubjubService } from './services/babyjubjub.service';
+import { WindowRefService } from './services/window.ref.service';
 
 // Create an Injection Token with web3 inside
 export const WEB3 = new InjectionToken<Web3>('web3');
