@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
     private babyjubjubService: BabyjubjubService,
     private windowRef: WindowRefService
   ) {
-    this.window = windowRef.nativeWindow;
+    this.window = this.windowRef.nativeWindow;
   }
 
   async ngOnInit() {
