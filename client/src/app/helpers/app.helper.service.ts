@@ -3,8 +3,6 @@ import {Injectable} from '@angular/core';
 import { WindowRefService, ICustomWindow } from './../services/window.ref.service';
 
 import * as zkSnark from "snarkjs";
-import * as CryptoJS from 'crypto-js';
-import * as Base64 from 'crypto-js/enc-base64';
 
 @Injectable()
 export class AppHelperService {
@@ -15,17 +13,6 @@ export class AppHelperService {
     private windowRef: WindowRefService
   ) {
     this.window = this.windowRef.nativeWindow;
-  }
-
-  str2hash(s) {
-    var nHash = 0;
-    if (!s.length) return nHash;
-    for (var i=0,imax=s.length,n; i<imax; ++i) {
-      n = s.charCodeAt(i);
-      nHash = ((nHash<<5)-nHash)+n;
-      nHash = nHash & nHash;  // Convert to 32-bit integer
-    }
-    return Math.abs(nHash);
   }
 
   random (num_bytes) {
@@ -45,10 +32,6 @@ export class AppHelperService {
         result += ("000"+hex).slice(-4);
     }
     return result;
-  }
-
-  str2Sha1Base64(str) {
-    return Base64.stringify(CryptoJS.SHA1(str));
   }
 
 }

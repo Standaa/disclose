@@ -1,11 +1,10 @@
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import Web3 from 'web3';
-import * as zkSnark from "snarkjs";
-import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js";
+import Web3 from 'web3'; // tslint:disable-line
+import * as zkSnark from "snarkjs"; // tslint:disable-line
+import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js"; // tslint:disable-line
 
-import { BabyjubjubService } from './services/babyjubjub.service';
 import { FileImportService } from './../crypto/file.import.service';
 import { AppService } from './app.service';
 
@@ -33,7 +32,8 @@ export class AppComponent implements OnInit {
   inputs: any;
 
   formData: any;
-  zkData: {};
+  proofStr: any;
+  publicSignalsStr: string;
 
   @ViewChild('fileInputLabel')
   fileInputLabel: ElementRef;
@@ -43,7 +43,6 @@ export class AppComponent implements OnInit {
     private fb: FormBuilder,
     private appService: AppService,
     private appHelperService: AppHelperService,
-    private babyjubjubService: BabyjubjubService,
     private fileImportService: FileImportService
   ) {}
 
@@ -81,6 +80,20 @@ export class AppComponent implements OnInit {
     }
   }
 
+  async onSubmit({ value }: { value: User }) {
+    this.loader = true;
+    try {
+      this.setFormData(value);
+      this.setZkProofInputs();
+      const circuitAndProvingKeyArr = await this.retrieveCircuitAndProvingKey();
+      await this.createProof(circuitAndProvingKeyArr);
+      this.uploadInfomations();
+    } catch (err) {
+      console.log(err);
+    }
+    this.loader = false;
+  }
+
   setFormData (formValues: User) {
     this.formData = new FormData();
     this.formData.append('firstName', formValues.firstName);
@@ -91,21 +104,8 @@ export class AppComponent implements OnInit {
     // formData.append('userUploadedFile', this.fileToUpload);
   }
 
-  async onSubmit({ value }: { value: User }) {
-    this.loader = true;
-    console.log(value);
-    // const ped = await this.createPerdersen(formData);
-    this.setFormData(value);
-    this.setInputs();
-    await this.createProof();
-    // this.uploadInfomations();
-  }
-
-  async setInputs() {
-
-    // this.secret = zkSnark.bigInt(sec);
+  setZkProofInputs() {
     this.secret = this.appHelperService.random(6);
-
     this.inputs = [];
     for(var pair of this.formData.entries()) {
       if (pair[0] !== "userUploadedFile") {
@@ -117,26 +117,32 @@ export class AppComponent implements OnInit {
     }
   }
 
-  async createProof() {
-    this.fileImportService.getZkCircuitAndProvingKey().subscribe( ([vk_verifier, vk_proof]) => {
-      const provingKey = unstringifyBigInts(vk_proof);
-      const circuit = new zkSnark.Circuit(vk_verifier);
-      console.log('this inputs', this.inputs);
-      console.log('this.secret', this.secret);
-      console.log('circuit', circuit);
-      const witness = circuit.calculateWitness({ 'in': this.inputs, 'priv': this.secret });
-      // const witness = circuit.calculateWitness({ in: [zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082")], priv: this.secret });
-      // const witness = circuit.calculateWitness({ "in": ["1", "70", "20"], "priv":"101" });
-      console.log(new Date(), 'Generating proof');
-      const {proof, publicSignals} = zkSnark.groth.genProof(provingKey, witness);
-      console.log(new Date(), 'Done.');
-      this.loader = false;
+  retrieveCircuitAndProvingKey() {
+    return new Promise((resolve, reject) => this.fileImportService.getZkCircuitAndProvingKey().subscribe(resolve, reject));
+  }
+
+  createProof(circuitAndProvingKeyArr) {
+    return new Promise((resolve, reject) => {
+      try {
+        const provingKey = unstringifyBigInts(circuitAndProvingKeyArr[1]);
+        const circuit = new zkSnark.Circuit(circuitAndProvingKeyArr[0]);
+        const witness = circuit.calculateWitness({ 'in': this.inputs, 'priv': this.secret });
+        console.log(new Date(), 'Generating proof');
+        const {proof, publicSignals} = zkSnark.groth.genProof(provingKey, witness);
+        console.log(new Date(), 'Done.');
+        this.proofStr = JSON.stringify(stringifyBigInts(proof));
+        this.publicSignalsStr = JSON.stringify(stringifyBigInts(publicSignals));
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
     });
   }
 
   uploadInfomations() {
-    this.formData.append('zkData', this.zkData);
-    this.appService.uploadUserInformationsToAuthority(this.formData);
+    this.formData.append('proofStr', this.proofStr);
+    this.formData.append('publicSignalsStr', this.publicSignalsStr);
+    return this.appService.uploadUserInformationsToAuthority(this.formData).toPromise();
   }
 
   onFileChange(files: FileList) {

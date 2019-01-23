@@ -10,7 +10,7 @@ const userRouter = express.Router(),
       user = require('../models/user.model'),
       db = require('.././db.js');
 
-var cpUpload = upload.fields([{ name: 'firstName', maxCount: 1 }, { name: 'userUploadedFile', maxCount: 1 }])
+var cpUpload = upload.fields([{ name: 'firstName', maxCount: 1 }, { name: 'publicSignalsStr', maxCount: 1 },{ name: 'proofStr', maxCount: 1 },{ name: 'userUploadedFile', maxCount: 1 }])
 
 userRouter.route('/upload/informations')
            .post(
@@ -24,16 +24,8 @@ function uploadUserData() {
   return async (req, res, next) => {
 
     console.log('req.body', req.body.firstName);
-
-    console.log('req.files', req.files['userUploadedFile']);
-
-    // const videoId = req.params.id;
-
-    // console.log("req.body", req.body);
-
-    // let name = req.body.firstName;
-
-    // console.log(body);
+    console.log('req.body proofStr', req.body.proofStr);
+    console.log('req.body publicSignalsStr', req.body.publicSignalsStr);
 
     try {
       // res.set('Content-Type', 'text/plain')
