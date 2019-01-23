@@ -9,7 +9,7 @@ export class AppService {
 
   constructor(private httpClient: HttpClient) { }
 
-  uploadUserData(formData:FormData): Observable<any> {
+  uploadUserInformationsToAuthority (formData:FormData): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'multipart/form-data'
@@ -18,6 +18,4 @@ export class AppService {
     };
     return this.httpClient.post('http://localhost:8080/user/upload/informations', formData);
   }
-
-
 }

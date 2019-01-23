@@ -1,17 +1,18 @@
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { AppService } from './app.service';
-
 import Web3 from 'web3';
-import { WEB3 } from './web3.token';
-
-import { User } from './signup.interface';
+import * as zkSnark from "snarkjs";
+import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js";
 
 import { BabyjubjubService } from './services/babyjubjub.service';
-import { WindowRefService, ICustomWindow } from './services/window.ref.service';
+import { FileImportService } from './../crypto/file.import.service';
+import { AppService } from './app.service';
 
-import * as Bn from "../../node_modules/bn.js/lib/bn.js";
+import { WEB3 } from './web3.token';
+import { User } from './signup.interface';
+
+import { AppHelperService } from './helpers/app.helper.service';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +27,11 @@ export class AppComponent implements OnInit {
   fileToUpload: File;
   user: FormGroup;
 
-  window: ICustomWindow;
+  secret: string;
+  inputs: any;
+
+  formData: any;
+  zkData: {};
 
   @ViewChild('fileInputLabel')
   fileInputLabel: ElementRef;
@@ -35,13 +40,17 @@ export class AppComponent implements OnInit {
     @Inject(WEB3) private web3: Web3,
     private fb: FormBuilder,
     private appService: AppService,
+    private appHelperService: AppHelperService,
     private babyjubjubService: BabyjubjubService,
-    private windowRef: WindowRefService
-  ) {
-    this.window = this.windowRef.nativeWindow;
+    private fileImportService: FileImportService
+  ) {}
+
+  ngOnInit() {
+    this.configureForm();
+    // this.initMetamask();
   }
 
-  async ngOnInit() {
+  configureForm () {
     this.user = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -51,9 +60,11 @@ export class AppComponent implements OnInit {
       country: [''],
       age: [''],
       email: ['', [Validators.required, Validators.email, Validators.minLength(3)]],
-      fileToUpload: ['', [Validators.required]]
+      fileToUpload: ['']
     });
+  }
 
+  async initMetamask() {
     if ('enable' in this.web3.currentProvider) {
       await this.web3.currentProvider.enable();
     }
@@ -66,7 +77,62 @@ export class AppComponent implements OnInit {
     } else {
       console.log('Please Install Metamask and create an account noob');
     }
+  }
 
+  setFormData (formValues: User) {
+    this.formData = new FormData();
+    this.formData.append('firstName', formValues.firstName);
+    this.formData.append('lastName', formValues.lastName);
+    this.formData.append('email', formValues.email);
+    // this.formData.append('country', formValues.country);
+    // this.formData.append('age', formValues.age.toString());
+    // formData.append('userUploadedFile', this.fileToUpload);
+  }
+
+  async onSubmit({ value }: { value: User }) {
+    console.log(value);
+    // const ped = await this.createPerdersen(formData);
+    this.setFormData(value);
+    this.setInputs();
+    await this.createProof();
+    // this.uploadInfomations();
+  }
+
+  async setInputs() {
+
+    // this.secret = zkSnark.bigInt(sec);
+    this.secret = this.appHelperService.random(6);
+
+    this.inputs = [];
+    for(var pair of this.formData.entries()) {
+      if (pair[0] !== "userUploadedFile") {
+        let shortHexFormValue = this.appHelperService.str2Hex(pair[1]).slice(-16);
+        let intShortHexFormValue= parseInt(shortHexFormValue, 16);
+        let bigIntFormValueRepresentation = zkSnark.bigInt(intShortHexFormValue);
+        this.inputs.push(bigIntFormValueRepresentation);
+      }
+    }
+  }
+
+  async createProof() {
+    this.fileImportService.getZkCircuitAndProvingKey().subscribe( ([provableMerkle, vk_proof]) => {
+      const prooof = stringifyBigInts(vk_proof);
+      const circuit = new zkSnark.Circuit(stringifyBigInts(provableMerkle));
+      console.log('this inputs', this.inputs);
+      console.log('this.secret', this.secret);
+      console.log('circuit', circuit);
+      const witness = circuit.calculateWitness({ in: this.inputs, priv: this.secret });
+      // const witness = circuit.calculateWitness({ in: [zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082")], priv: this.secret });
+      // const witness = circuit.calculateWitness({ in: ["1", "70", "20"], priv:"101" });
+      const {proof, publicSignals} = zkSnark.groth.genProof(unstringifyBigInts(prooof), unstringifyBigInts(witness));
+
+
+    });
+  }
+
+  uploadInfomations() {
+    this.formData.append('zkData', this.zkData);
+    this.appService.uploadUserInformationsToAuthority(this.formData);
   }
 
   onFileChange(files: FileList) {
@@ -75,47 +141,5 @@ export class AppComponent implements OnInit {
       .join(', ');
     this.fileToUpload = files.item(0);
   }
-
-  async onSubmit({ value, valid }: { value: User, valid: boolean }) {
-    console.log(value, valid);
-
-    let formData: FormData = new FormData();
-    console.log('value', value.firstName);
-
-    formData.append('firstName', value.firstName);
-    formData.append('lastName', value.lastName);
-    formData.append('email', value.email);
-    formData.append('country', value.country);
-    formData.append('age', value.age.toString());
-    formData.append('userUploadedFile', this.fileToUpload);
-
-    // formData.append('publicKey', this.publicKey);
-
-    const ped = await this.createPerdersen(formData);
-    console.log("ped", ped);
-    console.log("ped2", ped.toString());
-    // Generation dun snark.
-
-
-    // this.appService.uploadUserData(formData, ped, mySnark).subscribe(res => console.log(res));
-
-  }
-
-   async createPerdersen(formData) {
-     const random_num = new Uint8Array(253 / 8); // 2048 = number length in bits
-     const sec = this.window.crypto.getRandomValues(random_num);
-
-     let inputs = [];
-     for(var pair of formData.entries()) {
-       if (pair[0] !== "userUploadedFile") {
-         console.log(pair[1]);
-         inputs.push(new Bn(pair[1], 10));
-       }
-     }
-
-     const secret = new Bn(sec.toString(), 10);
-     return this.babyjubjubService.pedersenCommitment(inputs, secret);
-   }
-
 
 }

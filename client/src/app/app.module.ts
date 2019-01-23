@@ -12,6 +12,8 @@ import Web3 from 'web3';
 
 import { BabyjubjubService } from './services/babyjubjub.service';
 import { WindowRefService } from './services/window.ref.service';
+import { FileImportService } from './../crypto/file.import.service';
+import { AppHelperService } from './helpers/app.helper.service';
 
 // Create an Injection Token with web3 inside
 export const WEB3 = new InjectionToken<Web3>('web3');
@@ -30,6 +32,8 @@ export const WEB3 = new InjectionToken<Web3>('web3');
   providers: [
     BabyjubjubService,
     WindowRefService,
+    FileImportService,
+    AppHelperService,
     { provide: WEB3,
     useFactory: () => new Web3(Web3.givenProvider || "ws://localhost:8546")
   }],
