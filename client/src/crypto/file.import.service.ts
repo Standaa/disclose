@@ -11,7 +11,7 @@ export class FileImportService {
     private httpClient: HttpClient
   ) { }
 
-  getZkCircuitAndProvingKey (): Observable<any> {
+  getZkCircuitAndProvingKey = (): Observable<any> => {
     return forkJoin(
        this.httpClient.get('crypto/provable_merkle.json'),
        this.httpClient.get('crypto/proving_key.json')

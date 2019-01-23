@@ -10,3 +10,19 @@
 .checkbox-row {
   display: inline-flex;
 }
+
+.loader {
+  min-height: 100vh;
+  min-width: 100vw;
+  position: absolute;
+  background-color: black;
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.justify-content-center {
+  -ms-flex-pack: center!important;
+  justify-content: center!important;
+  min-height: 100vh;
+  align-items: center;
+}

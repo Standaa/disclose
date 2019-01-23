@@ -27,6 +27,8 @@ export class AppComponent implements OnInit {
   fileToUpload: File;
   user: FormGroup;
 
+  loader = false;
+
   secret: string;
   inputs: any;
 
@@ -90,6 +92,7 @@ export class AppComponent implements OnInit {
   }
 
   async onSubmit({ value }: { value: User }) {
+    this.loader = true;
     console.log(value);
     // const ped = await this.createPerdersen(formData);
     this.setFormData(value);
@@ -115,18 +118,19 @@ export class AppComponent implements OnInit {
   }
 
   async createProof() {
-    this.fileImportService.getZkCircuitAndProvingKey().subscribe( ([provableMerkle, vk_proof]) => {
-      const prooof = stringifyBigInts(vk_proof);
-      const circuit = new zkSnark.Circuit(stringifyBigInts(provableMerkle));
+    this.fileImportService.getZkCircuitAndProvingKey().subscribe( ([vk_verifier, vk_proof]) => {
+      const provingKey = unstringifyBigInts(vk_proof);
+      const circuit = new zkSnark.Circuit(vk_verifier);
       console.log('this inputs', this.inputs);
       console.log('this.secret', this.secret);
       console.log('circuit', circuit);
-      const witness = circuit.calculateWitness({ in: this.inputs, priv: this.secret });
+      const witness = circuit.calculateWitness({ 'in': this.inputs, 'priv': this.secret });
       // const witness = circuit.calculateWitness({ in: [zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082"), zkSnark.bigInt("1018983982094839844893290842399423809480983948293574389082")], priv: this.secret });
-      // const witness = circuit.calculateWitness({ in: ["1", "70", "20"], priv:"101" });
-      const {proof, publicSignals} = zkSnark.groth.genProof(unstringifyBigInts(prooof), unstringifyBigInts(witness));
-
-
+      // const witness = circuit.calculateWitness({ "in": ["1", "70", "20"], "priv":"101" });
+      console.log(new Date(), 'Generating proof');
+      const {proof, publicSignals} = zkSnark.groth.genProof(provingKey, witness);
+      console.log(new Date(), 'Done.');
+      this.loader = false;
     });
   }
 
