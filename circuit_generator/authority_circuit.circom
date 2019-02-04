@@ -33,4 +33,4 @@ template Main(n) {
     pedersen.out[1] ==> out[1];
 }
 
-component main = Main(5);
+component main = Main(6);
