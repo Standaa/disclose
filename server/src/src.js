@@ -1,25 +1,19 @@
-/**
- * Created by stanislasderoquemaurel on 23/04/2018
- */
+require('dotenv').config();
 
 const express = require('express'),
       bodyParser = require('body-parser'),
       mongoClient = require('mongodb').MongoClient,
       userRouter = require('./controllers/user.router.js'),
       middlewareHelper = require('./middleware.helper.js'),
-      environment = require('./environments/environment.js'),
       db = require('./db.js');
 
-const dbUrl = `mongodb://localhost:27017/disclose`;
+const dbUrl = `mongodb://${process.env.MONGO_USR_KEY}:${process.env.MONGO_PWD_KEY}@${process.env.MONGO_HOST_KEY}:${process.env.MONGO_PORT_KEY}/disclose`;
 
 const app = express(),
       appRoot = require('app-root-path');
 
 // app.use(bodyParser.json({limit: '50mb'})); // to support JSON-encoded bodies
 // app.use(bodyParser.urlencoded({limit: '50mb', extended: true})); // to support URL-encoded bodies
-
-// app.use(express.json({limit: '50mb'}));
-// app.use(express.urlencoded({limit: '50mb', extended: true}));
 
 app.use(middlewareHelper.headers);
 app.use('/user', userRouter);
