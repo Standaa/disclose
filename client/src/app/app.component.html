@@ -1,9 +1,7 @@
 <div class="loader" *ngIf="loader">
-  <div class="d-flex justify-content-center">
-    <div class="spinner-grow text-primary" role="status">
-      <span class="sr-only">Loading...</span>
+    <div class="progress">
+      <div class="progress-bar bg-primary" role="progressbar" [attr.aria-valuenow]="valueNow" aria-valuemin="0" aria-valuemax="100" [style.width]="(valueNow/100)*100 + '%'"></div>
     </div>
-  </div>
 </div>
 
 <nav class="navbar navbar-light bg-primary">
@@ -125,5 +123,9 @@
 	</div>
 
   </form>
+
+ <div class="success-text">
+  <span class="text-success" *ngIf="success">Informations saved !</span>
+ <div>
 
 </div>

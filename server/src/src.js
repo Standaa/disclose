@@ -4,6 +4,7 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       mongoClient = require('mongodb').MongoClient,
       userRouter = require('./controllers/user.router.js'),
+      usersRouter = require('./controllers/users.router.js'),
       middlewareHelper = require('./middleware.helper.js'),
       db = require('./db.js');
 
@@ -17,6 +18,7 @@ const app = express(),
 
 app.use(middlewareHelper.headers);
 app.use('/user', userRouter);
+app.use('/users', usersRouter);
 app.use(middlewareHelper.errorHandler);
 
 

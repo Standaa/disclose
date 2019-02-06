@@ -1,0 +1,16 @@
+<div class="user-profile">
+  <br>
+  <p class="text-left">Firstname: {{user.firstName}}</p>
+  <p class="text-left">Lastname: {{user.lastName}}</p>
+  <p class="text-left">City: {{user.city}}</p>
+  <p class="text-left">Age: {{user.age}}</p>
+  <p class="text-left">Verification status : {{user.isVerified}}</p>
+  <p class="text-left">Id : </p>
+  <img [src]="img" class="img-fluid rounded id-proof border border-info" alt="Responsive image">
+
+  <div class="buttons">
+    <button type="button" class="btn btn-light verify-light" (click)="cancel()">Cancel</button>
+    <button type="button" class="btn btn-primary verify-button" (click)="setUserVerified()">Verify</button>
+  </div>
+
+</div>

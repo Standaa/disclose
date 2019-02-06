@@ -1,9 +1,9 @@
 import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import Web3 from 'web3'; // tslint:disable-line
-import * as zkSnark from "snarkjs"; // tslint:disable-line
-import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js";
+import Web3 from 'web3'; // @ts-ignore
+import * as zkSnark from "snarkjs"; // @ts-ignore
+import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js"; // @ts-ignore
 
 import { FileImportService } from './../crypto/file.import.service';
 import { AppService } from './app.service';
@@ -25,16 +25,15 @@ export class AppComponent implements OnInit {
   publicKey: string = '';
   fileToUpload: File;
   user: FormGroup;
-
   loader = false;
-
   secret: string;
   inputs: any;
-
   formData: FormData;
   proofStr: any;
   publicSignalsStr: string;
   userData: User;
+  success = false;
+  valueNow = 0;
 
   @ViewChild('fileInputLabel')
   fileInputLabel: ElementRef;
@@ -48,9 +47,8 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const localStorageUser = JSON.parse(localStorage.getItem('user'));
-    console.log('localStorageUser', localStorageUser);
-
+    // const localStorageUser = JSON.parse(localStorage.getItem('user'));
+    // console.log('localStorageUser', localStorageUser);
     // if (userId) {
     //   console.log('There is already a userId', userId);
     // } else {
@@ -90,16 +88,27 @@ export class AppComponent implements OnInit {
 
   async onSubmit({ value }: { value: User }) {
     this.loader = true;
+
+    this.runProgress();
+
     try {
       this.setUserData(value);
       this.setFormData();
       this.setZkProofInputs();
       const circuitAndProvingKeyArr = await this.retrieveCircuitAndProvingKey();
       await this.createProof(circuitAndProvingKeyArr);
-      this.uploadInfomations().then(userId => {
-        this.userData.id = userId;
-        localStorage.setItem('user', JSON.stringify(this.userData));
-      }).catch(err => console.log(err));
+      this.uploadInfomations()
+      .then(() => {
+        // console.log('user id received', userId);
+        // this.userData.id = userId;
+        // localStorage.setItem('user', JSON.stringify(this.userData));
+        this.success = true;
+        setTimeout(() => {
+          this.success = false;
+          this.user.reset();
+        }, 3000);
+      })
+      .catch(err => console.log(err));
     } catch (err) {
       console.log(err);
     }
@@ -117,7 +126,7 @@ export class AppComponent implements OnInit {
       'address': data.address,
       'age': data.age,
       'email': data.email,
-      'idProof': data.idProof
+      'idProof': this.fileToUpload
     }
   }
 
@@ -129,7 +138,7 @@ export class AppComponent implements OnInit {
     this.formData.append('country', this.userData.country);
     this.formData.append('age', (this.userData.age).toString(10));
     this.formData.append('email', this.userData.email);
-    this.formData.append('userUploadedFile', this.userData.idProof);
+    this.formData.append('idProof', this.fileToUpload);
   }
 
   setZkProofInputs() {
@@ -137,8 +146,7 @@ export class AppComponent implements OnInit {
     this.inputs = [];
     // @ts-ignore
     for(var pair of this.formData.entries()) {
-      if (pair[0] !== "userUploadedFile") {
-        console.log('pair[1]', pair[1]);
+      if (pair[0] !== "idProof") {
         let shortHexFormValue = this.appHelperService.str2Hex(pair[1]).slice(-16);
         let intShortHexFormValue= parseInt(shortHexFormValue, 16);
         let bigIntFormValueRepresentation = zkSnark.bigInt(intShortHexFormValue);
@@ -163,9 +171,6 @@ export class AppComponent implements OnInit {
         console.log(new Date(), 'Done.');
         this.proofStr = JSON.stringify(stringifyBigInts(proof));
         this.publicSignalsStr = JSON.stringify(stringifyBigInts(publicSignals));
-        console.log('this.proofStr', this.proofStr);
-
-        console.log('this.publicSignalsStr', this.publicSignalsStr);
         resolve();
       } catch (e) {
         reject(e);
@@ -185,5 +190,18 @@ export class AppComponent implements OnInit {
       .join(', ');
     this.fileToUpload = files.item(0);
   }
+
+  runProgress () {
+    const startTime = new Date().getTime();
+    return setInterval(() => {
+      if (new Date().getTime() - startTime > 60000) {
+          clearInterval(this.runProgress());
+          return;
+      }
+      this.valueNow++;
+      console.log('This value now', this.valueNow);
+    }, 2000);
+  }
+
 
 }

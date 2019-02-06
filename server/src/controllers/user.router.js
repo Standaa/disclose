@@ -5,7 +5,8 @@ const express = require('express'),
 
 const { stringifyBigInts, unstringifyBigInts } = require("snarkjs/src/stringifybigint.js");
 
-const upload = multer({ dest: 'uploads/' });
+const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 
 const userRouter = express.Router(),
       middlewareHelper = require('.././middleware.helper.js'),
@@ -13,20 +14,20 @@ const userRouter = express.Router(),
       user = require('../models/user.model'),
       db = require('.././db.js');
 
-var cpUpload = upload.fields([{ name: 'firstName', maxCount: 1 }, { name: 'publicSignalsStr', maxCount: 1 },{ name: 'proofStr', maxCount: 1 },{ name: 'userUploadedFile', maxCount: 1 }])
+var cpUpload = upload.fields([
+  { name: 'idProof', maxCount: 1 }
+])
 
 userRouter.route('/upload/informations')
            .post(
-              // middlewareHelper.params('data'),
               cpUpload,
               uploadUserData(),
               middlewareHelper.responseHandler
            )
 
-userRouter.route('/informations/:id')
+userRouter.route('/verify/:id')
           .get(
-            middlewareHelper.params('id'),
-            getUserData(),
+            setUserVerified(),
             middlewareHelper.responseHandler
           )
 
@@ -40,7 +41,7 @@ function uploadUserData() {
       country: req.body.country,
       age: req.body.age,
       email: req.body.email,
-      idProof: req.body.idProof,
+      idProof: req.files.idProof,
       proofStr: req.body.proofStr,
       publicSignalsStr: req.body.publicSignalsStr,
       isVerified: false
@@ -62,54 +63,40 @@ function uploadUserData() {
 
     // Compare the two arrays to see if they match
     if (inputs.length === receivedMerkle.length && inputs.every((value, index) => value === receivedMerkle[index])) {
-
-      console.log('data.proofStr', data.proofStr );
-      console.log('data.publicSignalsStr', data.publicSignalsStr);
-
-      let clientSideProof = unstringifyBigInts(JSON.parse(data.proofStr));
-      let clientSidePublicSignals = unstringifyBigInts(JSON.parse(data.publicSignalsStr));
-
-      console.log('clientSideProof', clientSideProof);
-      console.log('clientSidePublicSignals', clientSidePublicSignals);
-
+      const proof = unstringifyBigInts(JSON.parse(data.proofStr));
+      const publicSignals = unstringifyBigInts(JSON.parse(data.publicSignalsStr));
       const vk_verifier = unstringifyBigInts(JSON.parse(fs.readFileSync("./src/verification_key.json", "utf8")));
 
-      console.log(vk_verifier);
-      if (snarkjs.groth.isValid(vk_verifier, clientSideProof, clientSidePublicSignals)) {
+      // Verify proof
+      if (snarkjs.groth.isValid(vk_verifier, proof, publicSignals)) {
         console.log("The proof is valid");
+        user.add(data).then(id => {
+          res.status(200).send();
+        })
+        .catch(error => {
+          console.log(error);
+          next(error);
+        });
       } else {
-        console.log("The proof is not valid");
+        throw new Error('Proof is invalid');
       }
-
     } else {
-      throw new Error('Proof could not be verified');
+      throw new Error('Incorrect informations sent');
     }
-
-    user.add(data).then(id => {
-      console.log("after db", id);
-      res.status(200).send(id);
-    })
-    .catch(error => {
-      console.log(error);
-      next(error);
-    });
-
   }
 }
 
-function getUserData () {
+function setUserVerified () {
   return (req, res, next) => {
-    try {
-      const userId = request.params.id;
-
-      // res.set('Content-Type', 'text/plain')
-      // res.send(`You sent: ${name} to Express`)
-      // req.status = 200;      ;
-      next();
-    } catch (err) {
-      console.log(err);
-      next(err)
-    }
+    const userId = req.params.id;
+    user.setUserVerified(userId)
+    .then(data => {
+      res.status(200).send();
+    })
+    .catch(err => {
+        console.log('2', err);
+        next(err);
+    });
   }
 }
 

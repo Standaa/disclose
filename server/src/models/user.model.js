@@ -1,4 +1,5 @@
-const db = require('../db.js');
+const db = require('../db.js'),
+      ObjectId = require('mongodb').ObjectID;
 
 exports.add = (data) => {
   return new Promise((resolve, reject) => {
@@ -13,14 +14,17 @@ exports.add = (data) => {
   });
 }
 
-exports.getUserInformations = (id) => {
+exports.setUserVerified = (id) => {
   return new Promise((resolve, reject) => {
     const user = db.get().collection('user');
-    user.find(id, function(err, user) {
+    user.updateOne(
+      { _id: ObjectId(id) },
+      { $set: { "isVerified": true } },
+    function(err, user) {
       if (err) {
         reject(err);
       } else {
-        resolve(user);
+        resolve();
       }
     });
   });

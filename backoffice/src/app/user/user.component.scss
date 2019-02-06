@@ -1,0 +1,23 @@
+.user-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.verify-button {
+  max-width: 100px;
+}
+
+.verify-light {
+  max-width: 100px;
+  margin-right: 20px;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+}
+
+.id-proof {
+  max-width: 50vw;
+}
