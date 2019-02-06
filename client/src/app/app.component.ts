@@ -89,8 +89,6 @@ export class AppComponent implements OnInit {
   async onSubmit({ value }: { value: User }) {
     this.loader = true;
 
-    this.runProgress();
-
     try {
       this.setUserData(value);
       this.setFormData();
@@ -106,6 +104,7 @@ export class AppComponent implements OnInit {
         setTimeout(() => {
           this.success = false;
           this.user.reset();
+          this.fileInputLabel.nativeElement.innerText = '';
         }, 3000);
       })
       .catch(err => console.log(err));
@@ -190,18 +189,5 @@ export class AppComponent implements OnInit {
       .join(', ');
     this.fileToUpload = files.item(0);
   }
-
-  runProgress () {
-    const startTime = new Date().getTime();
-    return setInterval(() => {
-      if (new Date().getTime() - startTime > 60000) {
-          clearInterval(this.runProgress());
-          return;
-      }
-      this.valueNow++;
-      console.log('This value now', this.valueNow);
-    }, 2000);
-  }
-
 
 }
