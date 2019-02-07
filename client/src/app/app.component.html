@@ -110,6 +110,10 @@
 
  <div class="success-text">
   <span class="text-success" *ngIf="success">Informations saved !</span>
- <div>
+ </div>
+
+ <div *ngIf="uri" class="download-button">
+  <a class="btn btn-primary" [href]="uri" download="keystore.json">Download keystore</a>
+ </div>
 
 </div>

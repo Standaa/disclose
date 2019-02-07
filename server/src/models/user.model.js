@@ -17,9 +17,13 @@ exports.add = (data) => {
 exports.setUserVerified = (id) => {
   return new Promise((resolve, reject) => {
     const user = db.get().collection('user');
-    user.updateOne(
+    user.findOneAndUpdate(
       { _id: ObjectId(id) },
       { $set: { "isVerified": true } },
+      {
+        returnOriginal: false,
+        upsert: true
+      },
     function(err, user) {
       if (err) {
         reject(err);

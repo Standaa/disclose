@@ -10,11 +10,11 @@ export class AppService {
   constructor(private httpClient: HttpClient) { }
 
   getUsersPendingVerification (): Observable<any> {
-    return this.httpClient.get('http://localhost:8080/users/pending/verification');
+    return this.httpClient.get('http://localhost:3030/users/pending/verification');
   }
 
   setUserVerified(userId): Observable <any> {
-    return this.httpClient.get(`http://localhost:8080/user/verify/${userId}`);
+    return this.httpClient.get(`http://localhost:3030/user/verify/${userId}`);
   }
 
 }

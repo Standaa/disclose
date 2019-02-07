@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import Web3 from 'web3'; // @ts-ignore
@@ -12,6 +12,9 @@ import { WEB3 } from './web3.token';
 import { User } from './signup.interface';
 
 import { AppHelperService } from './helpers/app.helper.service';
+import { DataService } from './data.service';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-root',
@@ -19,10 +22,9 @@ import { AppHelperService } from './helpers/app.helper.service';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
 
   title = 'disclose';
-  publicKey: string = '';
   fileToUpload: File;
   user: FormGroup;
   loader = false;
@@ -34,6 +36,9 @@ export class AppComponent implements OnInit {
   userData: User;
   success = false;
   valueNow = 0;
+  uri: any;
+
+  connection: any;
 
   @ViewChild('fileInputLabel')
   fileInputLabel: ElementRef;
@@ -43,10 +48,17 @@ export class AppComponent implements OnInit {
     private fb: FormBuilder,
     private appService: AppService,
     private appHelperService: AppHelperService,
-    private fileImportService: FileImportService
-  ) {}
+    private fileImportService: FileImportService,
+    private dataService: DataService,
+    private sanitizer: DomSanitizer
+  ) {
+   //  this.connection = this.dataService.getMessages().subscribe(message => {
+   //   console.log('SIGNED DATA RECEIVED', message);
+   // })
+  }
 
   ngOnInit() {
+
     // const localStorageUser = JSON.parse(localStorage.getItem('user'));
     // console.log('localStorageUser', localStorageUser);
     // if (userId) {
@@ -55,6 +67,10 @@ export class AppComponent implements OnInit {
       this.configureForm();
     // }
     // this.initMetamask();
+  }
+
+  ngOnDestroy() {
+   this.connection.unsubscribe();
   }
 
   configureForm () {
@@ -71,21 +87,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  async initMetamask() {
-    if ('enable' in this.web3.currentProvider) {
-      await this.web3.currentProvider.enable();
-    }
-
-    const accounts = await this.web3.eth.getAccounts();
-
-    if (accounts) {
-      this.publicKey = accounts[0];
-      console.log(accounts, accounts[0]);
-    } else {
-      console.log('Please Install Metamask and create an account noob');
-    }
-  }
-
   async onSubmit({ value }: { value: User }) {
     this.loader = true;
 
@@ -96,16 +97,18 @@ export class AppComponent implements OnInit {
       const circuitAndProvingKeyArr = await this.retrieveCircuitAndProvingKey();
       await this.createProof(circuitAndProvingKeyArr);
       this.uploadInfomations()
-      .then(() => {
-        // console.log('user id received', userId);
-        // this.userData.id = userId;
-        // localStorage.setItem('user', JSON.stringify(this.userData));
+      .then((signedData) => {
+
+        let keyStore: any = {};
+        keyStore.signedData = signedData;
+        keyStore.secret = stringifyBigInts(this.secret);
+        keyStore.inputs = stringifyBigInts(this.inputs);
+
+        this.uri = this.sanitizer.bypassSecurityTrustUrl("data:application/json;charset=UTF-8," + encodeURIComponent(JSON.stringify(keyStore)));
+
         this.success = true;
-        setTimeout(() => {
-          this.success = false;
-          this.user.reset();
-          this.fileInputLabel.nativeElement.innerText = '';
-        }, 3000);
+        setTimeout(()=> this.success = false, 4000);
+
       })
       .catch(err => console.log(err));
     } catch (err) {
@@ -163,8 +166,8 @@ export class AppComponent implements OnInit {
       try {
         const provingKey = unstringifyBigInts(circuitAndProvingKeyArr[1]);
         const circuit = new zkSnark.Circuit(circuitAndProvingKeyArr[0]);
-        console.log(this.inputs, this.inputs.length);
         const witness = circuit.calculateWitness({ 'in': this.inputs, 'priv': this.secret });
+        console.log(this.inputs, this.secret);
         console.log(new Date(), 'Generating proof');
         const {publicSignals, proof } = zkSnark.groth.genProof(provingKey, witness);
         console.log(new Date(), 'Done.');
