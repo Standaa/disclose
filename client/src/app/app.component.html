@@ -87,24 +87,6 @@
 
   <div class="row">
     <div class="form-group col-md-4">
-      <label>
-        Are you an accredited investor ?
-        <div class="form-check-inline">
-         <label class="form-check-label">
-           <input type="radio" class="form-check-input" name="optradio">Yes
-         </label>
-        </div>
-        <div class="form-check-inline">
-         <label class="form-check-label">
-           <input type="radio" class="form-check-input" name="optradio">No
-         </label>
-        </div>
-      </label>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="form-group col-md-4">
       <div class="custom-file">
         <input type="file" class="custom-file-input" accept=".pdf,.png,.jpeg,.jpg" #fileInput
         (change)="onFileChange($event.target.files)" formControlName="fileToUpload" [ngClass]="{'is-invalid': user.get('fileToUpload').invalid && user.get('fileToUpload').touched,
@@ -125,5 +107,13 @@
 	</div>
 
   </form>
+
+ <div class="success-text">
+  <span class="text-success" *ngIf="success">Informations saved !</span>
+ </div>
+
+ <div *ngIf="uri" class="download-button">
+  <a class="btn btn-primary" [href]="uri" download="keystore.json">Download keystore</a>
+ </div>
 
 </div>

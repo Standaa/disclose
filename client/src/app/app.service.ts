@@ -16,6 +16,6 @@ export class AppService {
         // 'Authorization': 'my-auth-token'
       })
     };
-    return this.httpClient.post('http://localhost:8080/user/upload/informations', formData);
+    return this.httpClient.post('http://localhost:3030/user/upload/informations', formData);
   }
 }

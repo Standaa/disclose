@@ -1,0 +1,15 @@
+<div class="loader" *ngIf="loader">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-light bg-primary">
+  <span class="navbar-brand mb-0 h1 title">Disclose - Backoffice</span>
+</nav>
+
+<div id="main" class="container-fluid">
+  <router-outlet></router-outlet>
+</div>

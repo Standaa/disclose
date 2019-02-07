@@ -1,33 +1,35 @@
-const ObjectId = require('mongodb').ObjectID,
-      environment = require('../environments/environment.js'),
-      db = require('../db.js');
+const db = require('../db.js'),
+      ObjectId = require('mongodb').ObjectID;
 
-exports.incrementViewCounter = (videoId) => {
+exports.add = (data) => {
   return new Promise((resolve, reject) => {
-    const videos = db.get().collection('videos');
-    // const objId = ObjectId(videoId);
-    videos.update(
-      { episodes: {$elemMatch: {id: videoId}}},
-      { $inc : { "episodes.$.viewCount" : 1 }},
+    const user = db.get().collection('user');
+    user.insertOne(data,
       function (err, result) {
+        console.log('insert');
         if (err) reject(err);
-        resolve({message: `Video ${videoId} viewCount updated`});
+        resolve(result.insertedId);
       }
     )
   });
 }
 
-exports.getDetails = (videoId) => {
+exports.setUserVerified = (id) => {
   return new Promise((resolve, reject) => {
-    const videos = db.get().collection('videos');
-    videos.aggregate([
-      {$match: {'episodes.id': videoId}},
-      { $unwind : "$episodes" },
-      { $match : { "episodes.id": videoId } }
-    ]).toArray((err, result) => {
-      console.log(err);
-      if (err) reject(err);
-      resolve(result);
+    const user = db.get().collection('user');
+    user.findOneAndUpdate(
+      { _id: ObjectId(id) },
+      { $set: { "isVerified": true } },
+      {
+        returnOriginal: false,
+        upsert: true
+      },
+    function(err, user) {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
   });
 }

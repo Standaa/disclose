@@ -1,0 +1,29 @@
+<div class="loader" *ngIf="loader">
+  <div class="d-flex justify-content-center">
+    <div class="spinner-grow text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-light bg-primary">
+  <span class="navbar-brand mb-0 h1 title">Company website</span>
+</nav>
+
+ <div id="main" class="container-fluid">
+
+  <h3 class="page-header">Prove your identity</h3>
+
+	<hr/>
+
+  <p>Please upload your data</p>
+
+  <div class="custom-file">
+    <input type="file" class="custom-file-input" accept=".json" #fileInput
+    (change)="onFileChange($event.target.files)" formControlName="fileToUpload">
+    <label class="custom-file-label" #fileInputLabel for="fileInput">Select a file...</label>
+    <div class="invalid-feedback">Please upload an ID</div>
+  </div>
+
+
+</div>

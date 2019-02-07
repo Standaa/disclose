@@ -1,0 +1,40 @@
+.page-header {
+  margin-top: 60px;
+}
+
+.title {
+  color: white;
+  font-size: 18px;
+}
+
+.checkbox-row {
+  display: inline-flex;
+}
+
+.loader {
+  min-height: 100vh;
+  min-width: 100vw;
+  position: absolute;
+  background-color: black;
+  opacity: 0.7;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: -webkit-center;
+}
+
+.progress {
+  max-width: 50vw;
+}
+
+.justify-content-center {
+  -ms-flex-pack: center!important;
+  justify-content: center!important;
+  min-height: 100vh;
+  align-items: center;
+}
+
+.success-text {
+  margin-top: 20px;
+}

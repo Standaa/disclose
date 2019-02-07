@@ -13,7 +13,7 @@ export class FileImportService {
 
   getZkCircuitAndProvingKey = (): Observable<any> => {
     return forkJoin(
-       this.httpClient.get('crypto/provable_merkle.json'),
+       this.httpClient.get('crypto/authority.cir'),
        this.httpClient.get('crypto/proving_key.json')
      );
    }

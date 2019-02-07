@@ -1,0 +1,23 @@
+.page-header {
+  margin-top: 60px;
+}
+
+.title {
+  color: white;
+  font-size: 18px;
+}
+
+.loader {
+  min-height: 100vh;
+  min-width: 100vw;
+  position: absolute;
+  background-color: white;  
+  z-index: 2;
+}
+
+.justify-content-center {
+  -ms-flex-pack: center!important;
+  justify-content: center!important;
+  min-height: 100vh;
+  align-items: center;
+}

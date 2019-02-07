@@ -1,4 +1,5 @@
 export interface User {
+  id: string;
   firstName: string;
   lastName: string;
   address: string;
@@ -7,5 +8,5 @@ export interface User {
   country: string;
   age: number;
   email: string;
-  fileToUpload: any;
+  idProof: any;
 }
