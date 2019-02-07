@@ -172,7 +172,7 @@ template Segment(nWindows) {
     out[1] <== m2e.out[1];
 }
 
-template Pedersen(n) {
+template Pedersen2(n) {
     signal input in[n];
     signal output out[2];
 

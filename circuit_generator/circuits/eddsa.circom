@@ -2,10 +2,9 @@ include "compconstant.circom";
 include "pointbits.circom";
 include "escalarmulany.circom";
 include "escalarmulfix.circom";
-include "pedersen_old.circom"
+include "pedersen.circom"
 
-template EdDSAVerifier() {
-    var n = 252;
+template EdDSAVerifier(n) {
     signal input msg[n];
 
     signal input A[256];
@@ -53,7 +52,7 @@ template EdDSAVerifier() {
 
 // Calculate the h = H(R,A, msg)
 
-    component hash = Pedersen(512+n);
+    component hash = Pedersen2(512+n);
 
     for (i=0; i<256; i++) {
         hash.in[i] <== R8[i];
@@ -118,5 +117,3 @@ template EdDSAVerifier() {
     mulFix.out[0] === addRight.xout;
     mulFix.out[1] === addRight.yout;
 }
-
-component main = EdDSAVerifier();
