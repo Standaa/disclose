@@ -20,4 +20,4 @@ The contract is available on Rinkeby on the following address: __0xFBA7Bc3EA5A16
 
 The code is available in deployment/contract and the test inputs are available in deployment.
 
-Credit for Circom and SnarkJS for providing most of the tooling.
+Thanks for Circom, SnarkJS for providing most of the tooling and for 0x and Coin list for providing an opportunity to try them out.
