@@ -1,14 +1,12 @@
-import { Component, OnInit, OnDestroy, Inject, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import Web3 from 'web3'; // @ts-ignore
 import * as zkSnark from "snarkjs"; // @ts-ignore
 import { stringifyBigInts, unstringifyBigInts } from "snarkjs/src/stringifybigint.js"; // @ts-ignore
 
 import { FileImportService } from './../crypto/file.import.service';
 import { AppService } from './app.service';
 
-import { WEB3 } from './web3.token';
 import { User } from './signup.interface';
 
 import { AppHelperService } from './helpers/app.helper.service';
@@ -44,29 +42,15 @@ export class AppComponent implements OnInit, OnDestroy {
   fileInputLabel: ElementRef;
 
   constructor (
-    @Inject(WEB3) private web3: Web3,
     private fb: FormBuilder,
     private appService: AppService,
     private appHelperService: AppHelperService,
-    private fileImportService: FileImportService,
-    private dataService: DataService,
+    private fileImportService: FileImportService,    
     private sanitizer: DomSanitizer
-  ) {
-   //  this.connection = this.dataService.getMessages().subscribe(message => {
-   //   console.log('SIGNED DATA RECEIVED', message);
-   // })
-  }
+  ) {}
 
   ngOnInit() {
-
-    // const localStorageUser = JSON.parse(localStorage.getItem('user'));
-    // console.log('localStorageUser', localStorageUser);
-    // if (userId) {
-    //   console.log('There is already a userId', userId);
-    // } else {
-      this.configureForm();
-    // }
-    // this.initMetamask();
+    this.configureForm();
   }
 
   ngOnDestroy() {

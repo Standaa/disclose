@@ -1,5 +1,8 @@
-# Company
+# Disclose - Company Client App (third party app example)
 
+This is a third party client side demo of Zk proofs. On this SPA, a user uploads his signed data to prove to that third party, that he complies with their KYC requirements.
+The user sends a transaction to the third party's smart contract, in order to prove that he did provide valid information to the certifying authority.
+No personal data is shared with the third party. The users' personal data thus remains confidential and secure.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.3.
 
 ## Development server

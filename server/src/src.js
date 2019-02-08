@@ -17,11 +17,18 @@ const express = require('express'),
 
 const dbUrl = `mongodb://${process.env.MONGO_USR_KEY}:${process.env.MONGO_PWD_KEY}@${process.env.MONGO_HOST_KEY}:${process.env.MONGO_PORT_KEY}/disclose`;
 
-const PORT = 3030;
+const PORT = process.env.PORT || 3030;
 
 // app.use(bodyParser.json({limit: '50mb'})); // to support JSON-encoded bodies
 // app.use(bodyParser.urlencoded({limit: '50mb', extended: true})); // to support URL-encoded bodies
 
+var corsOptions = {
+  origin: 'https://disclose-authority-client.herokuapp.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+app.options('*', cors());
+app.use(cors(corsOptions));
 app.use(middlewareHelper.headers);
 app.use('/user', userRouter);
 app.use('/users', usersRouter);

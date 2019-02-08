@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "node server.js",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "postinstall": "ng build --aot --prod"
   },
   "private": true,
   "dependencies": {
@@ -27,9 +28,11 @@
     "bn.js": "^4.11.8",
     "core-js": "^2.5.4",
     "crypto-js": "^3.1.9-1",
+    "express": "^4.16.4",
     "fs": "0.0.1-security",
+    "path": "^0.12.7",
     "rxjs": "^6.3.3",
-    "snarkjs": "^0.1.9",
+    "snarkjs": "github:stanislasdrg/snarkjs#master",
     "socket.io-client": "^2.2.0",
     "tslib": "^1.9.0",
     "web3": "^1.0.0-beta.37",
@@ -57,6 +60,7 @@
     "protractor": "~5.4.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.11.0",
-    "typescript": "~3.1.6"
+    "typescript": "~3.1.6",
+    "uglifyjs-webpack-plugin": "^2.1.1"
   }
 }

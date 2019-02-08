@@ -1,10 +1,8 @@
-# Disclose
+# Disclose - Authority Client App
 
 This is the client side demo of Disclose. On this SPA, a user submits his credentials to an authority he can trust.
 He computes a zk-proof of his informations and submits it to the authority. The authority then checks for the validity of all
-parameters received and signs part of the data, before sending it back to the user.
-s
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.3.
+parameters received and signs part of the data, before sending it back to the user. This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.1.3.
 
 ## Development server
 

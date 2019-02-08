@@ -9,6 +9,9 @@ export class AppService {
 
   constructor(private httpClient: HttpClient) { }
 
+  apiUrl = 'https://disclose-server.herokuapp.com/user/upload/informations';
+  apiUrl2 = 'http://localhost:5000/user/upload/informations';
+
   uploadUserInformationsToAuthority (formData:FormData): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
@@ -16,6 +19,6 @@ export class AppService {
         // 'Authorization': 'my-auth-token'
       })
     };
-    return this.httpClient.post('http://localhost:3030/user/upload/informations', formData);
+    return this.httpClient.post(this.apiUrl, formData);
   }
 }
