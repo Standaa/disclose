@@ -8,7 +8,7 @@ import * as io from 'socket.io-client';
 })
 export class DataService {
 
-  private url = 'ws://localhost:3030';
+  private url = 'ws://disclose-server.herokuapp.com';
   private socket;
 
   constructor() { }

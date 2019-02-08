@@ -7,7 +7,7 @@ const self = module.exports = {
         result += ("000"+hex).slice(-4);
     }
     return result;
-  }
+  },
 
   // Adds two arrays for the given base (10 or 16), returning the result.
   // This turns out to be the only "primitive" operation we need.
@@ -36,11 +36,11 @@ const self = module.exports = {
     var power = x;
     while (true) {
       if (num & 1) {
-        result = add(result, power, base);
+        result = self.add(result, power, base);
       }
       num = num >> 1;
       if (num === 0) break;
-      power = add(power, power, base);
+      power = self.add(power, power, base);
     }
 
     return result;
@@ -58,7 +58,7 @@ const self = module.exports = {
   },
 
   convertBase(str, fromBase, toBase) {
-    var digits = parseToDigitsArray(str, fromBase);
+    var digits = self.parseToDigitsArray(str, fromBase);
     if (digits === null) return null;
 
     var outArray = [];
@@ -66,9 +66,9 @@ const self = module.exports = {
     for (var i = 0; i < digits.length; i++) {
       // invariant: at this point, fromBase^i = power
       if (digits[i]) {
-        outArray = add(outArray, multiplyByNumber(digits[i], power, toBase), toBase);
+        outArray = self.add(outArray, self.multiplyByNumber(digits[i], power, toBase), toBase);
       }
-      power = multiplyByNumber(fromBase, power, toBase);
+      power = self.multiplyByNumber(fromBase, power, toBase);
     }
 
     var out = '';
@@ -80,13 +80,19 @@ const self = module.exports = {
 
   decToHex(decStr) {
     var hex = self.convertBase(decStr, 10, 16);
-    return hex ? '0x' + hex : null;
+    return hex ? hex : null;
   },
 
   hexToDec(hexStr) {
     if (hexStr.substring(0, 2) === '0x') hexStr = hexStr.substring(2);
     hexStr = hexStr.toLowerCase();
     return convertBase(hexStr, 16, 10);
+  },
+
+  pad(n, width, z) {
+    z = z || '0';
+    n = n + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
   }
 
 

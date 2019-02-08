@@ -83,12 +83,13 @@ function uploadUserData() {
 
           console.log('Raw message', publicSignals[0]);
 
-          console.log('Raw message hex', publicSignals[0]);
+          let hexMsg = cryptoHelper.decToHex(stringifyBigInts(publicSignals[0]));
 
-          // cryptoHelper.decToHex()
+          console.log('Raw message hex', hexMsg);
 
-          // const msg = bigInt.leInt2Buff(publicSignals[0], 250);
-          const msg = Buffer.from(stringifyBigInts(publicSignals[0]), 'hex');
+          hexMsg = cryptoHelper.pad(hexMsg, 64);
+
+          const msg = Buffer.from(hexMsg, "hex");
 
           console.log('Bufferized Message', msg);
 
