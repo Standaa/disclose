@@ -13,7 +13,11 @@ The protocol seeks to serve as an open standard to lower friction in permissione
 An user registers once all its informations to the Authority, in the shape of verifiable merkle tree. The authority validates the knowledge of the merkle tree and the information it contains. Upon validity, he signs the root with his private key and returns the message and signature to the user.
 The user can now used his knowledge of the merkle tree and of the signature with any Smart Contract that trusts the Authority and simply prove that he passes the requirements. The data and the proof simply needs to be transfered during the transaction. There is no more need for pre-registry or whitelisting to trade compliance products if a Smart Contract uses Disclose.
 
-__More information is available on the whitepaper in Github.__ The current implementation is a pure PoC, not ready for production. In case of additional interest in the project, more efficient protocols would be implemented. Only the authority/user interface has been pushed online. A simplified version of the smart contract is accessible but we do not provide an interface. At last, because of subtilities in the way the inputs are handled, please use the preprocessed input available in deployment.
+__More information is available on the whitepaper in Github.__ The current implementation is a pure PoC, not ready for production. In case of additional interest in the project, more efficient protocols would be implemented. Only the authority/user interface has been pushed online. 
+
+The authority/user interface is quite slowly because of the need to download the snark parameters from the server. Have a look at the video to understand what is going under the hood (or simply turn on your developer tools).
+
+A simplified version of the smart contract is accessible but we do not provide an interface. At last, because of subtilities in the way the inputs are handled, please use the preprocessed input available in deployment.
 
 The code is available in deployment/contract and the test inputs are available in deployment.
 
