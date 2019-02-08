@@ -1,0 +1,26 @@
+{
+  "0x9e0af3127ac5abc0eb8bfa910bccd5f9005921adea5e826efd3a20b84f4a17af": {
+    "contracts": {
+      "0x761e446579bbcee7f3595cba7a9cdb5bf59eddf0b5a33f53c2408c3d9262afa2": {
+        "name": "Pairing",
+        "address": "0x595ee01622948Fae3663BdbFD17880D29eef6570"
+      },
+      "0xa444826cbe9ad3cc620965674de31033fbc645da35389865b056df03822bdd03": {
+        "name": "Verifier",
+        "address": "0xAfd3d96cA50302985210de124879813F308FD48d"
+      },
+      "0x3043b04ad856d169c8f0b0509c0bc63192dc7edd92d6933c58708298a0e381be": {
+        "name": "ENSRegistry",
+        "address": "0x4a546dFC20FDc3E520372B726E3cd5ea9782aA85"
+      },
+      "0x375bd1998d524a68c0a7723fbdb8392ec5361d94b8d9962cefcbd64e029ebc68": {
+        "name": "Resolver",
+        "address": "0x31708320bb97790eE6c1d903Dfd7a7eE3b74897d"
+      },
+      "0x3d8f0d0ea1af8018d76d4038f279c9362271f1b7d58d07d341fad5aa4d6813f4": {
+        "name": "FIFSRegistrar",
+        "address": "0x9a69d6770DbbeDF40BB91599a841C6d89Ab2888b"
+      }
+    }
+  }
+}

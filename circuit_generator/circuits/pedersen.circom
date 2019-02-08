@@ -172,7 +172,7 @@ template Segment(nWindows) {
     out[1] <== m2e.out[1];
 }
 
-template Pedersen(n) {
+template Pedersen2(n) {
     signal input in[n];
     signal output out[2];
 
@@ -230,7 +230,7 @@ template Pedersen(n) {
     }
 
 /*
-    coponent packPoint = PackPoint();
+    component packPoint = PackPoint();
 
     if (nSegments>1) {
         packPoint.in[0] <== adders[nSegments-2].xout;
