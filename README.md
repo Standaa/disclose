@@ -3,21 +3,24 @@ Disclose seeks to be the Facebook Connect of Blockchain. It leverages Zero Knowl
 
 It provides:
 
-* Private: Trade tokens without revealing to everyone who you are
+* Privacy: Trade tokens without revealing to everyone who you are
 * Crosschain reusability: As simple as Facebook connect for the blockchain
 * Minimal: Answer compliance requirements with as much as a 0 or 1
 * Auditable: Only the authorized people can access the underlying data upon request
 
-The protocol seeks to serve as an open standard to lower friction in permissioned environment, especially for KYC certification. It allows Users to prove themselves to Companies, leveraging trusted third parties known as Authorities.
+The protocol seeks to serve as an open standard to lower friction in permissioned environments, especially for KYC certification. It allows Users to prove themselves to Companies, leveraging trusted third parties known as Authorities.
 
-An user registers once all its informations to the Authority, in the shape of verifiable merkle tree. The authority validates the knowledge of the merkle tree and the information it contains. Upon validity, he signs the root with his private key and returns the message and signature to the user.
-The user can now used his knowledge of the merkle tree and of the signature with any Smart Contract that trusts the Authority and simply prove that he passes the requirements. The data and the proof simply needs to be transfered during the transaction. There is no more need for pre-registry or whitelisting to trade compliance products if a Smart Contract uses Disclose.
+A user registers once, all his informations to the Authority, in the form of a verifiable merkle tree.
+The authority then validates the knowledge of the merkle tree and the information it contains.
+If the informations provided are valid, the authority signs the root with its private key and returns the message and signature to the user.
+The user can now use the merkle tree and the signature, with any Smart Contract that trusts the Authority, and therefore simply prove that he passes the requirements.
+The data and the proof needs to be sent with the transaction. As a consequence, if a Smart Contract uses Disclose, there is no more need for whitelisting addresses to trade KYC dependent products.
 
-__More information is available on the whitepaper in Github.__ The current implementation is a pure PoC, not ready for production. In case of additional interest in the project, more efficient protocols would be implemented. Only the authority/user interface has been pushed online. 
+__More information is available on the whitepaper in Github.__ The current implementation is a pure PoC, not ready for production. In case of additional interest in the project, more efficient protocols would be implemented. Only the [authority/user interface]() has been pushed online.
 
-The authority/user interface is quite slowly because of the need to download the snark parameters from the server. Have a look at the video to understand what is going under the hood (or simply turn on your developer tools).
+The authority/user interface is quite slow at the moment, because of the need to download the snark parameters from the server. Have a look at the video to understand what is going under the hood (or simply turn on your developer tools).
 
-A simplified version of the smart contract is accessible but we do not provide an interface. At last, because of subtilities in the way the inputs are handled, please use the preprocessed input available in deployment.
+A simplified version of the smart contract is accessible, but we do not provide an interface. At last, because of subtilities in the way the inputs are handled, please use the preprocessed input available in deployment.
 
 The code is available in deployment/contract and the test inputs are available in deployment.
 
@@ -32,4 +35,4 @@ Contract interaction: __https://youtu.be/vghPIw6t_JU__
 The contract is available on Rinkeby on the following address: __0xFBA7Bc3EA5A16246844D730a6168Af4A96373aA3__
 
 
-Thanks for Circom, SnarkJS for providing most of the tooling and for 0x and Coin list for providing an opportunity to try them out.
+Special thanks to Circom & SnarkJS for providing most of the tooling and to 0x and Coinlist for providing an opportunity to try them out.
