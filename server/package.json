@@ -2,20 +2,21 @@
   "name": "disclose-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src.js",
   "engines": {
-    "node": "^9.8.0"
+    "node": "^11.6.0"
   },
   "scripts": {
+    "dev": "nodemon src/src.js",
+    "start": "NODE_ENV=production node src/src.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "app-root-path": "^2.0.1",
     "blake-hash": "^1.1.0",
     "body-parser": "^1.18.3",
-    "dotenv": "^6.2.0",
+    "cors": "^2.8.5",
     "express": "^4.16.3",
     "mongodb": "^3.0.7",
     "multer": "^1.4.1",
@@ -25,6 +26,7 @@
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
-    "nodemon": "^1.17.3"
+    "nodemon": "^1.17.3",
+    "dotenv": "^6.2.0"
   }
 }

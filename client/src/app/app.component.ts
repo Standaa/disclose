@@ -10,7 +10,6 @@ import { AppService } from './app.service';
 import { User } from './signup.interface';
 
 import { AppHelperService } from './helpers/app.helper.service';
-import { DataService } from './data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 
 
@@ -45,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private appService: AppService,
     private appHelperService: AppHelperService,
-    private fileImportService: FileImportService,    
+    private fileImportService: FileImportService,
     private sanitizer: DomSanitizer
   ) {}
 

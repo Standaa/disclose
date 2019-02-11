@@ -12,7 +12,7 @@ const self = module.exports = {
       next(err);
     } else {
       next();
-    }     
+    }
   },
 
   responseHandler: (req, res, next) => {
@@ -26,14 +26,14 @@ const self = module.exports = {
      res.status(200).send(responseObject);
   },
 
-  errorHandler: (err, req, res, next) => {      
+  errorHandler: (err, req, res, next) => {
     if (err) {
       console.log(`error handler ${err}`);
       const errStatusCode = err.status || err.statusCode;
-      res.status(errStatusCode).json({        
+      res.status(errStatusCode).json({
         status: errStatusCode,
         message: self.errorMessage(req, errStatusCode)
-      });          
+      });
     }
   },
 

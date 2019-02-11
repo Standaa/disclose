@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from './../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,7 @@ export class AppService {
 
   constructor(private httpClient: HttpClient) { }
 
-  apiUrl = 'https://disclose-server.herokuapp.com/user/upload/informations';
-  apiUrl2 = 'http://localhost:5000/user/upload/informations';
+  apiUrl = environment.apiUrl;
 
   uploadUserInformationsToAuthority (formData:FormData): Observable<any> {
     const httpOptions = {
@@ -19,6 +19,6 @@ export class AppService {
         // 'Authorization': 'my-auth-token'
       })
     };
-    return this.httpClient.post(this.apiUrl, formData);
+    return this.httpClient.post(`${this.apiUrl}/user/upload/informations`, formData);
   }
 }

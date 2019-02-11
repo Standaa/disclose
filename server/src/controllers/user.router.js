@@ -40,6 +40,8 @@ userRouter.route('/verify/:id')
 function uploadUserData() {
   return async (req, res, next) => {
 
+    console.log('WE ARE IN DOKKU');
+
     let data = {
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -53,25 +55,46 @@ function uploadUserData() {
       isVerified: false
     }
 
-    // Reconstitute inputs array from received params and check if merkle tree matches
-    let inputs = [];
-    Object.keys(data).forEach(function(key, index) {
-      if (index < 6) {
-        let shortHexFormValue = cryptoHelper.str2Hex(data[key]).slice(-16);
-        let intShortHexFormValue = parseInt(shortHexFormValue, 16); //.toString();
-        let bigIntFormValueRepresentation = bigInt(intShortHexFormValue);
-        inputs.push(bigIntFormValueRepresentation.toString());
-      }
-    });
+    console.log('data received', data);
 
-    // Remove Merkle root from Merkle tree
-    const receivedMerkle = JSON.parse(data.publicSignalsStr).slice(2);
+    let inputs = [];
+    let receivedMerkle;
+
+    try {
+      // Reconstitute inputs array from received params and check if merkle tree matches
+      Object.keys(data).forEach(function(key, index) {
+        if (index < 6) {
+          let shortHexFormValue = cryptoHelper.str2Hex(data[key]).slice(-16);
+          let intShortHexFormValue = parseInt(shortHexFormValue, 16); //.toString();
+          let bigIntFormValueRepresentation = bigInt(intShortHexFormValue);
+          inputs.push(stringifyBigInts(bigIntFormValueRepresentation));
+        }
+      });
+
+      // Remove Merkle root from Merkle tree
+      receivedMerkle = JSON.parse(data.publicSignalsStr).slice(2);
+
+    } catch (paramParsingErr) {
+        console.log(paramParsingErr);
+        res.status(400).send('Bad request - Check params');
+    }
+
+    console.log('inputs', inputs, '\n', 'inputs.length', inputs.length);
+    console.log('receivedMerkle', receivedMerkle, '\n', 'receivedMerkle.length', receivedMerkle.length);
+
+    inputs.every((value, index) => {
+      console.log('inputs value', value);
+      console.log('receivedMerkle[index]', receivedMerkle[index]);
+    });
 
     // Compare the two arrays to see if they match
     if (inputs.length === receivedMerkle.length && inputs.every((value, index) => value === receivedMerkle[index])) {
+
       const proof = unstringifyBigInts(JSON.parse(data.proofStr));
       const publicSignals = unstringifyBigInts(JSON.parse(data.publicSignalsStr));
       const vk_verifier = unstringifyBigInts(JSON.parse(fs.readFileSync("./src/crypto/verification_key.json", "utf8")));
+
+      console.log('SET', proof, '\n', publicSignals, '\n', vk_verifier);
 
       // Verify proof
       if (snarkjs.groth.isValid(vk_verifier, proof, publicSignals)) {
@@ -126,10 +149,10 @@ function uploadUserData() {
           res.status(200).send('Crash');
         });
       } else {
-        throw new Error('Proof is invalid');
+        res.status(400).send('Incorrect informations sent');
       }
     } else {
-      throw new Error('Incorrect informations sent');
+      res.status(400).send('Incorrect informations sent');
     }
 
   }
